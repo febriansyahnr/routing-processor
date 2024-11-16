@@ -3,8 +3,8 @@ use std::time::Duration;
 use sqlx::mysql::MySqlPoolOptions;
 use sqlx::MySqlPool;
 
-pub async fn get_pool() -> Result<MySqlPool, sqlx::Error> {
-    let db_url = "mysql://root:123qweasdzxc@localhost:3306/processor_routing";
+pub async fn get_pool(database_url: &str) -> Result<MySqlPool, sqlx::Error> {
+    let db_url = database_url;
     MySqlPoolOptions::new()
     .max_connections(10)
     .min_connections(5)

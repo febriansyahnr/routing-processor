@@ -13,6 +13,7 @@ pub struct Processor {
     updated_at: chrono::DateTime<Utc>,
 }
 
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ProcessorQuery {
     name: Option<String>,
     status: Option<String>,
