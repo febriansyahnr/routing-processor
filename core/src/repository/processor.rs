@@ -1,0 +1,90 @@
+use sqlx::mysql::MySqlPool;
+use crate::model::processor::{Processor, ProcessorQuery};
+use crate::port::repository::TProcessor;
+use crate::prelude::*;
+
+pub struct ProcessorRepository<'a> {
+    db: &'a MySqlPool
+}
+
+impl <'a> ProcessorRepository<'a> {
+    pub fn new(db: &'a MySqlPool) -> Self {
+        ProcessorRepository {
+            db
+        }
+    }
+}
+
+impl TProcessor for ProcessorRepository<'_> {
+    async fn get_processor(&self, uuid: String) -> Result<Processor> {
+        let result: Processor = sqlx::query_as("select * from processors where uuid = ?")
+            .bind(uuid)
+            .fetch_one(self.db)
+            .await?;
+
+        Ok(result)
+    }
+    async fn get_all_processors(&self, q: ProcessorQuery) -> Result<Vec<Processor>> {
+        let (where_clause, values) = q.get_query();
+
+        let sql_query = format!("select * from processors {}", where_clause);
+        let mut sql_query = sqlx::query_as(&sql_query);
+        if !values.is_empty() {
+            for val in values {
+                sql_query = sql_query.bind(val);
+            }
+        }
+
+        let result: Vec<Processor> = sql_query
+            .fetch_all(self.db)
+            .await?;
+
+        Ok(result)
+    }
+}
+
+mod test_processor_repo {
+    use super::*;
+
+    #[tokio::test]
+    async fn test_connection() -> Result<()> {
+        let pool = crate::utils::database::get_pool().await?;
+        let repo = ProcessorRepository::new(&pool);
+        let result = repo.get_all_processors(ProcessorQuery::default()).await?;
+        let mut last_uuid = "".to_string();
+
+        for processor in result {
+            println!("{:#?}", processor);
+            last_uuid = processor.uuid.to_owned();
+        }
+
+        let last_processor = repo.get_processor(last_uuid.clone()).await?;
+        println!("Last Processor:\n\t{:#?}", last_processor);
+        assert_eq!(last_processor.uuid, last_uuid);
+
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn test_get_all_processors() -> Result<()> {
+        let pool = crate::utils::database::get_pool().await?;
+        let repo = ProcessorRepository::new(&pool);
+        let result = repo.get_all_processors(ProcessorQuery::new(None, Some("active".to_owned()))).await?;
+        for processor in result {
+            println!("{:#?}", processor);
+        }
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn test_get_all_processors_with_query_name() -> Result<()> {
+        let pool = crate::utils::database::get_pool().await?;
+        let repo = ProcessorRepository::new(&pool);
+        let result = repo.get_all_processors(ProcessorQuery::new(Some("snap-core-processor".to_owned()), None)).await?;
+        for processor in &result {
+            println!("{:#?}", processor);
+        }
+        assert_eq!(result.len(), 1);
+        Ok(())
+    }
+}
