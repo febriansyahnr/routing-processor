@@ -18,4 +18,7 @@ pub enum Error {
 
     #[error(transparent)]
     SQLX(#[from] sqlx::Error),
+
+    #[error(transparent)]
+    Testconatiners(#[from] testcontainers::TestcontainersError),
 }
