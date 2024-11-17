@@ -13,6 +13,21 @@ pub struct Processor {
     pub updated_at: chrono::DateTime<Utc>,
 }
 
+impl Processor {
+    pub fn new(name: &str, base_url: &str, desc: &str) -> Self {
+        let now = Utc::now();
+        Self {
+            uuid: uuid::Uuid::now_v7().to_string(),
+            name: name.to_string(),
+            base_url: base_url.to_string(),
+            description: desc.to_string(),
+            status: "active".to_string(),
+            created_at: now,
+            updated_at: now,
+        }
+    }
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ProcessorQuery {
     name: Option<String>,
