@@ -29,10 +29,12 @@ impl TProcessor for ProcessorRepository<'_> {
 
         let sql_query = format!("select * from processors {}", where_clause);
         let mut sql_query = sqlx::query_as(&sql_query);
-        if !values.is_empty() {
-            for val in values {
-                sql_query = sql_query.bind(val);
-            }
+        if values.is_empty() {
+            return Err(Error::RecordNotFound);
+        }
+
+        for val in values {
+            sql_query = sql_query.bind(val);
         }
 
         let result: Vec<Processor> = sql_query
@@ -48,7 +50,7 @@ mod test_processor_repo {
 
     #[tokio::test]
     async fn test_connection() -> Result<()> {
-        let config = crate::config::Config::new();
+        let config = crate::config::Config::new()?;
         let pool = crate::utils::database::get_pool(&config.database_url).await?;
         let repo = ProcessorRepository::new(&pool);
         let result = repo.get_all_processors(ProcessorQuery::default()).await?;
@@ -68,7 +70,7 @@ mod test_processor_repo {
 
     #[tokio::test]
     async fn test_get_all_processors() -> Result<()> {
-        let config = crate::config::Config::new();
+        let config = crate::config::Config::new()?;
         let pool = crate::utils::database::get_pool(&config.database_url).await?;
         let repo = ProcessorRepository::new(&pool);
         let result = repo.get_all_processors(ProcessorQuery::new(None, Some("active".to_owned()))).await?;
@@ -80,7 +82,7 @@ mod test_processor_repo {
 
     #[tokio::test]
     async fn test_get_all_processors_with_query_name() -> Result<()> {
-        let  config = crate::config::Config::new();
+        let  config = crate::config::Config::new()?;
         let pool = crate::utils::database::get_pool(&config.database_url).await?;
         let repo = ProcessorRepository::new(&pool);
         let result = repo.get_all_processors(ProcessorQuery::new(Some("snap-core-processor".to_owned()), None)).await?;

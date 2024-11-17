@@ -5,12 +5,12 @@ use sqlx::FromRow;
 #[derive(Debug, Clone, Serialize, Deserialize, FromRow)]
 pub struct Processor {
     pub uuid: String,
-    name: String,
-    description: String,
-    base_url: String,
-    status: String,
-    created_at: chrono::DateTime<Utc>,
-    updated_at: chrono::DateTime<Utc>,
+    pub name: String,
+    pub description: String,
+    pub base_url: String,
+    pub status: String,
+    pub created_at: chrono::DateTime<Utc>,
+    pub updated_at: chrono::DateTime<Utc>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
