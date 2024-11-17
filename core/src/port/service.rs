@@ -4,6 +4,6 @@ use crate::{
     model::transfer::TransferRequest, 
 };
 
-pub trait TTransfer {
+pub trait CanTransfer {
     fn transfer(&self, req: &TransferRequest) -> impl Future<Output = Result<()>> + Send;
 }

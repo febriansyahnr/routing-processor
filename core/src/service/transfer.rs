@@ -8,7 +8,7 @@ pub struct TransferService <'a> {
     transfer_config_repo: Box<TransferConfigRepository<'a>>,
 }
 
-impl service::TTransfer for TransferService<'_> {
+impl service::CanTransfer for TransferService<'_> {
     async fn transfer(&self, req: &TransferRequest) -> Result<()> {
         let routings = self.transfer_config_repo.get_transfer_config_routing().await?;
 
