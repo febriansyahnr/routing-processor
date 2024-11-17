@@ -16,7 +16,7 @@ impl <'a> ProcessorRepository<'a> {
 }
 
 impl TProcessor for ProcessorRepository<'_> {
-    async fn get_processor(&self, uuid: String) -> Result<Processor> {
+    async fn get_processor(&self, uuid: uuid::Uuid) -> Result<Processor> {
         let result: Processor = sqlx::query_as("select * from processors where uuid = ?")
             .bind(uuid)
             .fetch_one(self.db)
@@ -45,7 +45,7 @@ impl TProcessor for ProcessorRepository<'_> {
     }
     async fn create(&self, processor: &Processor) -> Result<()> {
         sqlx::query("insert into processors (uuid, name, base_url, description, status, created_at, updated_at) values (?, ?, ?, ?, ?, ?, ?)")
-        .bind(processor.uuid.to_owned())
+        .bind(processor.uuid)
         .bind(processor.name.to_owned())
         .bind(processor.base_url.to_owned())
         .bind(processor.description.to_owned())
@@ -78,14 +78,14 @@ mod test_processor_repo {
         let pool = crate::utils::connection::get_mysql_pool(&config.database_url).await?;
         let repo = ProcessorRepository::new(&pool);
         let result = repo.get_all_processors(ProcessorQuery::default()).await?;
-        let mut last_uuid = "".to_string();
+        let mut last_uuid = uuid::Uuid::nil();
 
         for processor in result {
             println!("{:#?}", processor);
-            last_uuid = processor.uuid.to_owned();
+            last_uuid = processor.uuid;
         }
 
-        let last_processor = repo.get_processor(last_uuid.clone()).await?;
+        let last_processor = repo.get_processor(last_uuid).await?;
         println!("Last Processor:\n\t{:#?}", last_processor);
         assert_eq!(last_processor.uuid, last_uuid);
 

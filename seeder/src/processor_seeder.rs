@@ -1,4 +1,5 @@
 use core::{port::repository::TProcessor, prelude::*};
+use std::str::FromStr;
 use crate::prelude::*;
 use sqlx::mysql::MySqlPool;
 use core::repository::processor::ProcessorRepository;

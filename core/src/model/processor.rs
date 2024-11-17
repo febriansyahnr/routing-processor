@@ -1,10 +1,11 @@
 use chrono::Utc;
 use serde::{Deserialize, Serialize};
 use sqlx::FromRow;
+use uuid::Uuid;
 
 #[derive(Debug, Clone, Serialize, Deserialize, FromRow)]
 pub struct Processor {
-    pub uuid: String,
+    pub uuid: Uuid,
     pub name: String,
     pub description: String,
     pub base_url: String,
@@ -17,7 +18,7 @@ impl Processor {
     pub fn new(name: &str, base_url: &str, desc: &str) -> Self {
         let now = Utc::now();
         Self {
-            uuid: uuid::Uuid::now_v7().to_string(),
+            uuid: uuid::Uuid::now_v7(),
             name: name.to_string(),
             base_url: base_url.to_string(),
             description: desc.to_string(),
