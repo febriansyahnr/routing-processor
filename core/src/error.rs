@@ -4,6 +4,8 @@ use crate::utils::envs;
 pub enum Error {
     #[error("Generic: {0}")]
     Generic(String),
+    #[error("Feature not implemented: {0}")]
+    NotImplemented(String),
 
     // -- Database
     #[error("Record not found in database")]

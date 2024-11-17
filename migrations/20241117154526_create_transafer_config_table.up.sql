@@ -3,7 +3,7 @@ CREATE TABLE IF NOT EXISTS `transfer_configs` (
     `uuid` varchar(36) NOT NULL,
     `processor_uuid` varchar(36) NOT NULL,
     `priority` int NOT NULL,
-    `destination` varchar(50) NOT NULL DEFAULT 'Default',
+    `module` varchar(50) NOT NULL DEFAULT 'Default',
     `method` varchar(50) NOT NULL DEFAULT '' COMMENT 'INTRABANK,INTERBANK,BIFAST,etc',
     `limit_config` json DEFAULT NULL,
     `status` varchar(15) NOT NULL DEFAULT 'active',

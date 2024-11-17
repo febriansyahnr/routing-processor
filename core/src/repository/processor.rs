@@ -45,7 +45,7 @@ impl TProcessor for ProcessorRepository<'_> {
     }
     async fn create(&self, processor: &Processor) -> Result<()> {
         sqlx::query("insert into processors (uuid, name, base_url, description, status, created_at, updated_at) values (?, ?, ?, ?, ?, ?, ?)")
-        .bind(processor.uuid)
+        .bind(processor.uuid.to_string())
         .bind(processor.name.to_owned())
         .bind(processor.base_url.to_owned())
         .bind(processor.description.to_owned())
