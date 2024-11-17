@@ -51,7 +51,7 @@ mod test_processor_repo {
     #[tokio::test]
     async fn test_connection() -> Result<()> {
         let config = crate::config::Config::new()?;
-        let pool = crate::utils::database::get_pool(&config.database_url).await?;
+        let pool = crate::utils::connection::get_mysql_pool(&config.database_url).await?;
         let repo = ProcessorRepository::new(&pool);
         let result = repo.get_all_processors(ProcessorQuery::default()).await?;
         let mut last_uuid = "".to_string();
@@ -71,7 +71,7 @@ mod test_processor_repo {
     #[tokio::test]
     async fn test_get_all_processors() -> Result<()> {
         let config = crate::config::Config::new()?;
-        let pool = crate::utils::database::get_pool(&config.database_url).await?;
+        let pool = crate::utils::connection::get_mysql_pool(&config.database_url).await?;
         let repo = ProcessorRepository::new(&pool);
         let result = repo.get_all_processors(ProcessorQuery::new(None, Some("active".to_owned()))).await?;
         for processor in result {
@@ -83,7 +83,7 @@ mod test_processor_repo {
     #[tokio::test]
     async fn test_get_all_processors_with_query_name() -> Result<()> {
         let  config = crate::config::Config::new()?;
-        let pool = crate::utils::database::get_pool(&config.database_url).await?;
+        let pool = crate::utils::connection::get_mysql_pool(&config.database_url).await?;
         let repo = ProcessorRepository::new(&pool);
         let result = repo.get_all_processors(ProcessorQuery::new(Some("snap-core-processor".to_owned()), None)).await?;
         for processor in &result {
