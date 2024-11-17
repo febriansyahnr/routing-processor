@@ -1,0 +1,10 @@
+[package]
+name = "seeder"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+core = { path = "../core" }
+sqlx = { version = "0.8.2", features = ["runtime-tokio", "chrono", "mysql"] }
+tokio = { version = "1.41.1", features = ["full"] }
+uuid = { version = "1.11.0", features = ["serde", "v4", "v7"] }

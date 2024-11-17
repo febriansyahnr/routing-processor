@@ -43,6 +43,30 @@ impl TProcessor for ProcessorRepository<'_> {
 
         Ok(result)
     }
+    async fn create(&self, processor: &Processor) -> Result<()> {
+        sqlx::query("insert into processors (uuid, name, base_url, description, status, created_at, updated_at) values (?, ?, ?, ?, ?, ?, ?)")
+        .bind(processor.uuid.to_owned())
+        .bind(processor.name.to_owned())
+        .bind(processor.base_url.to_owned())
+        .bind(processor.description.to_owned())
+        .bind(processor.status.to_owned())
+        .bind(processor.created_at)
+        .bind(processor.updated_at)
+        .execute(self.db)
+        .await?;
+        Ok(())
+    }
+    async fn update(&self, processor: &Processor) -> Result<()> {
+        sqlx::query("update processors set name = ?, description = ?, status = ?, updated_at = ? where uuid = ?")
+        .bind(processor.name.to_owned())
+        .bind(processor.description.to_owned())
+        .bind(processor.status.to_owned())
+        .bind(processor.updated_at)
+        .bind(processor.uuid.to_owned())
+        .execute(self.db)
+        .await?;
+        Ok(())
+    }
 }
 
 mod test_processor_repo {
