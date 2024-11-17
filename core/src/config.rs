@@ -16,7 +16,7 @@ impl Config {
     
 }
 
-pub fn core_config() -> &'static Config {
+pub fn get_config() -> &'static Config {
 	static INSTANCE: OnceLock<Config> = OnceLock::new();
 
 	INSTANCE.get_or_init(|| {
