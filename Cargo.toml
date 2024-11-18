@@ -1,7 +1,7 @@
 
 [workspace]
 resolver = "1"
-members = ["core", "seeder"]
+members = ["core", "seeder", "web_api"]
 
 [workspace.dependencies]
 chrono = {version = "0.4.38", features = ["serde"] }
