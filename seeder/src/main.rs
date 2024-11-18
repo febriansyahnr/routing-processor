@@ -14,12 +14,12 @@ async fn main() -> Result<()> {
         let poll = core::utils::connection::get_mysql_pool(&conf.database_url).await?;
     
         // Processor Seeder
-        processor_seeder::ProcessorSeeder::new("processor_seeder", &poll)
+        processor_seeder::ProcessorSeeder::new("processor_seeder", poll.clone())
         .execute()
         .await?;
     
         // Transfer Config Seeder
-        transfer_config_seeder::TransferConfigSeeder::new("transfer_config_seeder", &poll)
+        transfer_config_seeder::TransferConfigSeeder::new("transfer_config_seeder", poll.clone())
         .execute()
         .await?;
     }

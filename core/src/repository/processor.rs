@@ -1,25 +1,27 @@
+use std::sync::Arc;
+
 use sqlx::mysql::MySqlPool;
 use crate::model::processor::{Processor, ProcessorQuery};
 use crate::port::repository::TProcessor;
 use crate::prelude::*;
 
-pub struct ProcessorRepository<'a> {
-    db: &'a MySqlPool
+pub struct ProcessorRepository {
+    db: Arc<MySqlPool>
 }
 
-impl <'a> ProcessorRepository<'a> {
-    pub fn new(db: &'a MySqlPool) -> Self {
+impl  ProcessorRepository {
+    pub fn new(db: Arc<MySqlPool>) -> Self {
         ProcessorRepository {
             db
         }
     }
 }
 
-impl TProcessor for ProcessorRepository<'_> {
+impl TProcessor for ProcessorRepository {
     async fn get_processor(&self, uuid: uuid::Uuid) -> Result<Processor> {
         let result: Processor = sqlx::query_as("select * from processors where uuid = ?")
             .bind(uuid)
-            .fetch_one(self.db)
+            .fetch_one(self.db.as_ref())
             .await?;
 
         Ok(result)
@@ -38,7 +40,7 @@ impl TProcessor for ProcessorRepository<'_> {
         }
 
         let result: Vec<Processor> = sql_query
-            .fetch_all(self.db)
+            .fetch_all(self.db.as_ref())
             .await?;
 
         Ok(result)
@@ -52,7 +54,7 @@ impl TProcessor for ProcessorRepository<'_> {
         .bind(processor.status.to_owned())
         .bind(processor.created_at)
         .bind(processor.updated_at)
-        .execute(self.db)
+        .execute(self.db.as_ref())
         .await?;
         Ok(())
     }
@@ -63,7 +65,7 @@ impl TProcessor for ProcessorRepository<'_> {
         .bind(processor.status.to_owned())
         .bind(processor.updated_at)
         .bind(processor.uuid.to_owned())
-        .execute(self.db)
+        .execute(self.db.as_ref())
         .await?;
         Ok(())
     }
@@ -76,7 +78,7 @@ mod test_processor_repo {
     async fn test_connection() -> Result<()> {
         let config = crate::config::Config::new()?;
         let pool = crate::utils::connection::get_mysql_pool(&config.database_url).await?;
-        let repo = ProcessorRepository::new(&pool);
+        let repo = ProcessorRepository::new(pool);
         let result = repo.get_all_processors(ProcessorQuery::default()).await?;
         let mut last_uuid = uuid::Uuid::nil();
 
@@ -96,7 +98,7 @@ mod test_processor_repo {
     async fn test_get_all_processors() -> Result<()> {
         let config = crate::config::Config::new()?;
         let pool = crate::utils::connection::get_mysql_pool(&config.database_url).await?;
-        let repo = ProcessorRepository::new(&pool);
+        let repo = ProcessorRepository::new(pool);
         let result = repo.get_all_processors(ProcessorQuery::new(None, Some("active".to_owned()))).await?;
         for processor in result {
             println!("{:#?}", processor);
@@ -108,7 +110,7 @@ mod test_processor_repo {
     async fn test_get_all_processors_with_query_name() -> Result<()> {
         let  config = crate::config::Config::new()?;
         let pool = crate::utils::connection::get_mysql_pool(&config.database_url).await?;
-        let repo = ProcessorRepository::new(&pool);
+        let repo = ProcessorRepository::new(pool);
         let result = repo.get_all_processors(ProcessorQuery::new(Some("snap-core-processor".to_owned()), None)).await?;
         for processor in &result {
             println!("{:#?}", processor);

@@ -1,14 +1,15 @@
 use sqlx::MySqlPool;
 use crate::prelude::TSeeder;
 use core::{model::{processor::Processor, transfer_config::{TransferConfig, TransferConfigLimit}}, port::repository::{TProcessor, TTransferConfig}, prelude::*, repository::{processor::ProcessorRepository, transfer_config::TransferConfigRepository}};
+use std::sync::Arc;
 
-pub struct TransferConfigSeeder<'a> {
+pub struct TransferConfigSeeder {
     pub name: &'static str,
-    db: &'a MySqlPool
+    db: Arc<MySqlPool>
 }
 
-impl <'a> TransferConfigSeeder<'a> {
-    pub fn new(name: &'static str, db: &'a MySqlPool) -> Self {
+impl  TransferConfigSeeder {
+    pub fn new(name: &'static str, db: Arc<MySqlPool>) -> Self {
         Self {
             name,
             db,
@@ -16,10 +17,10 @@ impl <'a> TransferConfigSeeder<'a> {
     }
 }
 
-impl TSeeder for TransferConfigSeeder<'_> {
+impl TSeeder for TransferConfigSeeder {
     async fn execute(&self) -> Result<()> {
         println!("Seeding TransferConfig {}", self.name);
-        let processor_repo = ProcessorRepository::new(self.db);
+        let processor_repo = ProcessorRepository::new(self.db.clone());
         let snap_core_processor = Processor::new(
             "snap-core-processor",
             "http://localhost",
@@ -27,7 +28,7 @@ impl TSeeder for TransferConfigSeeder<'_> {
         );
         processor_repo.create(&snap_core_processor).await?;
 
-        let transfer_config_repo = TransferConfigRepository::new(self.db);
+        let transfer_config_repo = TransferConfigRepository::new(self.db.clone());
         let modules: [String;3] = [
             "BCA".to_string(),
             "BRI".to_string(),

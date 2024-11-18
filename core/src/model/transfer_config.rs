@@ -63,13 +63,13 @@ impl TransferConfig {
 
 #[derive(Deserialize, Serialize, FromRow)]
 pub struct TransferConfigWithProcessor {
-    pub uuid: uuid::Uuid,
-    pub priority: u64,
+    pub uuid: String,
+    pub priority: i32,
     pub module: String,
     pub method: String,
     pub limit_config: Json<TransferConfigLimit>,
     pub status: String,
-    pub processor_uuid: uuid::Uuid,
+    pub processor_uuid: String,
     pub name: String,
     pub description: String,
     pub base_url: String,

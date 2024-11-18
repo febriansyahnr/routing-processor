@@ -1,16 +1,17 @@
 use core::{port::repository::TProcessor, prelude::*};
+use std::sync::Arc;
 use crate::prelude::*;
 use sqlx::mysql::MySqlPool;
 use core::repository::processor::ProcessorRepository;
 use core::model;
 
-pub struct ProcessorSeeder<'a> {
+pub struct ProcessorSeeder {
     pub name: &'static str,
-    db: &'a MySqlPool
+    db: Arc<MySqlPool>
 }
 
-impl <'a> ProcessorSeeder<'a> {
-    pub fn new(name: &'static str, db: &'a MySqlPool) -> Self {
+impl ProcessorSeeder {
+    pub fn new(name: &'static str, db: Arc<MySqlPool>) -> Self {
         Self {
             name,
             db,
@@ -18,11 +19,11 @@ impl <'a> ProcessorSeeder<'a> {
     }
 }
 
-impl TSeeder for ProcessorSeeder<'_> {
+impl TSeeder for ProcessorSeeder {
     async fn execute(&self) -> Result<()> {
         println!("Seeding Processor {}", self.name);
 
-        let repo = ProcessorRepository::new(self.db);
+        let repo = ProcessorRepository::new(self.db.clone());
         let processor_model = model::processor::Processor
             ::new(
                 "snap-core-processor", 
