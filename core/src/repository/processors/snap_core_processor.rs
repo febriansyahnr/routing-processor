@@ -4,6 +4,12 @@ use crate::prelude::*;
 
 pub struct SnapCoreProcessor{}
 
+impl SnapCoreProcessor {
+    pub fn new() -> Self {
+        SnapCoreProcessor{}
+    }
+}
+
 impl TCoreProcessor for SnapCoreProcessor {
     async  fn transfer(&self, req: &model::TransferRequest, _: model::ETransferMethod) -> Result<model::TransferResponse> {
         match req.beneficiary_account.as_str() {

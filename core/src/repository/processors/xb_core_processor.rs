@@ -4,6 +4,14 @@ use crate::prelude::*;
 
 pub struct XBCoreProcessor {}
 
+impl XBCoreProcessor {
+    pub fn new() -> Self {
+        Self {
+            
+        }
+    }
+}
+
 impl TCoreProcessor for XBCoreProcessor {
     async  fn transfer(&self, req: &model::TransferRequest, _: model::ETransferMethod) -> Result<model::TransferResponse> {
         match req.beneficiary_account.as_str() {

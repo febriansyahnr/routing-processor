@@ -7,12 +7,20 @@ use crate::port::service::*;
 use crate::port::repository::*;
 use crate::repository::transfer_config::TransferConfigRepository;
 
-pub struct TransferService <'a> {
-    transfer_config_repo: Box<TransferConfigRepository<'a>>,
+pub struct TransferService  {
+    transfer_config_repo: Box<TransferConfigRepository>,
     core_processors: HashMap<String, Box<EProcessors>>,
 }
 
-impl CanTransfer for TransferService<'_> {
+impl TransferService {
+    pub fn new(
+        transfer_config_repo: Box<TransferConfigRepository>, 
+        core_processors: HashMap<String, Box<EProcessors>>) -> Self {
+        Self { transfer_config_repo, core_processors }
+    }
+}
+
+impl CanTransfer for TransferService {
     async fn transfer(&self, req: &TransferRequest) -> Result<TransferResponse> {
         let routings = self.transfer_config_repo.get_transfer_config_routing().await?;
         let mut resp = TransferResponse::new(

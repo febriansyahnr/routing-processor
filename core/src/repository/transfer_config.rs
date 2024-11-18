@@ -1,21 +1,22 @@
+use std::sync::Arc;
 use sqlx::mysql::MySqlPool;
 use crate::port::repository::TTransferConfig;
 use crate::prelude::*;
 use crate::model::transfer_config as model;
 
-pub struct TransferConfigRepository<'a> {
-    db: &'a MySqlPool
+pub struct TransferConfigRepository {
+    db: Arc<MySqlPool>
 }
 
-impl <'a> TransferConfigRepository<'a> {
-    pub fn new(db: &'a MySqlPool) -> Self {
+impl  TransferConfigRepository {
+    pub fn new(db: Arc<MySqlPool>) -> Self {
         TransferConfigRepository {
             db
         }
     }
 }
 
-impl  TTransferConfig for TransferConfigRepository<'_> {
+impl  TTransferConfig for TransferConfigRepository {
     async fn create(&self, config: &model::TransferConfig) -> Result<()> {
         sqlx::query(r#"
         insert into transfer_configs 
@@ -30,7 +31,7 @@ impl  TTransferConfig for TransferConfigRepository<'_> {
         .bind(config.status.to_owned())
         .bind(config.created_at)
         .bind(config.updated_at)
-        .execute(self.db)
+        .execute(self.db.as_ref())
         .await?;
 
         Ok(())
@@ -58,7 +59,7 @@ impl  TTransferConfig for TransferConfigRepository<'_> {
         "#;
         let result: Option<model::TransferConfigWithProcessor> = sqlx::query_as(query)
             .bind(uuid)
-            .fetch_optional(self.db)
+            .fetch_optional(self.db.as_ref())
             .await?;
         let Some(config) = result else {
             return Err(Error::RecordNotFound);
@@ -89,7 +90,7 @@ impl  TTransferConfig for TransferConfigRepository<'_> {
         "#;
 
         let result: Vec<model::TransferConfigWithProcessor> = sqlx::query_as(query)
-        .fetch_all(self.db)
+        .fetch_all(self.db.as_ref())
         .await?;
 
         Ok(result)
