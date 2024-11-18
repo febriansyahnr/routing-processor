@@ -1,12 +1,12 @@
 use std::future::Future;
-use crate::model::transfer as model;
+use crate::model::transfer::{self as model, TransferResponse};
 use crate::{
     prelude::*,
     model::transfer::TransferRequest, 
 };
 
 pub trait CanTransfer {
-    fn transfer(&self, req: &TransferRequest) -> impl Future<Output = Result<()>> + Send;
+    fn transfer(&self, req: &TransferRequest) -> impl Future<Output = Result<TransferResponse>> + Send;
 }
 
 use crate::repository::processors::{

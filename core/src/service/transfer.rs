@@ -1,4 +1,5 @@
 use std::collections::HashMap;
+use crate::model::transfer::TransferResponse;
 use crate::model::transfer as model;
 use crate::model::transfer::TransferRequest;
 use crate::prelude::*;
@@ -12,8 +13,12 @@ pub struct TransferService <'a> {
 }
 
 impl CanTransfer for TransferService<'_> {
-    async fn transfer(&self, req: &TransferRequest) -> Result<()> {
+    async fn transfer(&self, req: &TransferRequest) -> Result<TransferResponse> {
         let routings = self.transfer_config_repo.get_transfer_config_routing().await?;
+        let mut resp = TransferResponse::new(
+            "Transaction in Progress", 
+            model::ETransferStatus::Pending { code: "".to_string() }
+        );
 
         for routing in routings {
             println!("Sending transfer with: {} - {} - {}", routing.name, routing.module, routing.method);
@@ -28,8 +33,20 @@ impl CanTransfer for TransferService<'_> {
             };
 
             println!("Transfer response: {:?}", result);
+            match result.status {
+                model::ETransferStatus::Pending{ code: _ } => {
+                    return Ok(result)
+                },
+                model::ETransferStatus::Success => {
+                    return Ok(result)
+                },
+                _ => {            
+                    resp = result.clone();
+                    continue
+                },
+            }
         }
 
-        Ok(())
+        Ok(resp)
     }
 }
