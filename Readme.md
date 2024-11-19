@@ -31,13 +31,22 @@ Cara menjalankan Web API:
 
 ## Tech Stack
 Ada beberapa tech stack yang digunakan pada project ini, seperti:
-- Sqlx: Database driver.
-- Chrono: library untuk memanipulasi waktu.
-- Serde: Library untuk Serelize dan Deserialize JSON.
-- Dotenvy: Library untuk membaca file .env.
+- [Sqlx](https://docs.rs/sqlx/latest/sqlx/): Database driver.
+- [Chrono](https://docs.rs/chrono/latest/chrono/): library untuk memanipulasi waktu.
+- [Serde Json](https://docs.rs/serde_json/latest/serde_json/): Library untuk Serelize dan Deserialize JSON.
+- [Dotenvy](https://docs.rs/dotenvy/latest/dotenvy/): Library untuk membaca file .env.
+- [Actix Web](https://actix.rs/docs/): Web framework.
 
 ## Tool
 Ada beberapa tool yang digunakan pada project ini, seperti:
 - Rust: Programming language.
 - Cargo: Rust package manager.
 - Sqlx-cli: Aplikasi untuk membuat migration dan menjalankan migration. `cargo install sqlx-cli`
+
+## TODO
+- Add Redis Connection.
+- Add RabbitMQ Connection.
+- Change transfer to async.
+- Implement unit test using mockall.
+- Implement integration test using testcontainers.
+- Add distributed tracing using otel.
