@@ -17,9 +17,17 @@ Core merupakan shared library yang digunakan oleh beberapa binary project sepert
 
 ### Seeder
 Seeder merupakan binary yang digunakan untuk mengisi database dengan data dummy.
+Cara menjalankan seeder:
+1. Pastikan `.env` sudah disesuaikan.
+2. Jalankan migrasi up menggunakan perintah `sqlx migrate run --database-url mysql://user:pass@localhost/db_name`
+3. Ubah nilai `let should_run` di `seeder/src/main.rs` menjadi `true`
+4. Jalankan perintah `cargo run -p seeder`
 
 ### Web API
 Web API merupakan binary yang digunakan untuk mengakses endpoint dari aplikasi ini.
+Cara menjalankan Web API:
+1. Pastikan `.env` sudah disesuaikan.
+2. Jalankan perintah `cargo run -p web_api`
 
 ## Tech Stack
 Ada beberapa tech stack yang digunakan pada project ini, seperti:
@@ -32,4 +40,4 @@ Ada beberapa tech stack yang digunakan pada project ini, seperti:
 Ada beberapa tool yang digunakan pada project ini, seperti:
 - Rust: Programming language.
 - Cargo: Rust package manager.
-- Sqlx-cli: Aplikasi untuk membuat migration dan menjalankan migration.
+- Sqlx-cli: Aplikasi untuk membuat migration dan menjalankan migration. `cargo install sqlx-cli`
