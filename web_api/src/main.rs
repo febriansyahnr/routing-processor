@@ -5,6 +5,9 @@ use std::collections::HashMap;
 use std::sync::Arc;
 
 use actix_web::{web, App, HttpServer};
+use actix_web::middleware::Logger;
+use env_logger::Env;
+
 use transfer::*;
 use core::prelude::*;
 use core::config::get_config;
@@ -15,6 +18,8 @@ use core::service::transfer as services;
 
 #[actix_web::main]
 async fn main() -> Result<()> {
+    env_logger::init_from_env(Env::default().default_filter_or("info"));
+
     let config = get_config();
     let mysql_pool = connection::get_mysql_pool(&config.database_url).await?;
 
@@ -49,8 +54,11 @@ async fn main() -> Result<()> {
 
     HttpServer::new(move || {
         App::new()
+            .wrap(Logger::default())
+            .wrap(Logger::new("%a %{User-Agent}i"))
             .app_data(web::Data::new(app_state.clone()))
             .service(handle_transfer)
+            
     })
     .bind(("127.0.0.1", 8080))?
     .run()
