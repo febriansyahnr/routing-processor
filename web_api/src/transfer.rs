@@ -3,7 +3,7 @@ use std::collections::HashMap;
 use actix_web::{post, web, HttpResponse, Responder};
 use core::prelude::*;
 
-#[post("/api/internal/v1.0/transfer")]
+#[post("/api/v1.0/internal/transfer")]
 pub async fn handle_transfer(
     state: web::Data<AppState>, 
     req: web::Json<TransferRequest>,
