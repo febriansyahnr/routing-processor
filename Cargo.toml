@@ -1,6 +1,6 @@
 
 [workspace]
-resolver = "1"
+resolver = "2"
 members = ["core", "seeder", "web_api"]
 
 [workspace.dependencies]
